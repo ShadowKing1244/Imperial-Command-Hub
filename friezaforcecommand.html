@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frieza Force Command: Imperial Multi-Vector v6.0</title>
+    <style>
+        :root {
+            --scouter-teal: #00f2ff;
+            --frieza-purple: #8a2be2;
+            --frieza-gold: #ffd700;
+            --fail-red: #ff0033;
+            --bg-ultra-dark: #050008;
+            --glass-purple: rgba(30, 0, 60, 0.9);
+        }
+
+        body {
+            background-color: var(--bg-ultra-dark);
+            color: var(--scouter-teal);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* CRT/Scanline Effect */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .terminal-container {
+            width: 1100px;
+            height: 800px;
+            background: var(--glass-purple);
+            border: 2px solid var(--frieza-purple);
+            box-shadow: 0 0 50px rgba(138, 43, 226, 0.4);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 10px 20px;
+            border-bottom: 2px solid var(--frieza-purple);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            border-right: 1px solid var(--frieza-purple);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: transparent;
+            border: 1px solid var(--frieza-purple);
+            color: #fff;
+            text-align: left;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--frieza-purple);
+            box-shadow: 0 0 15px var(--frieza-purple);
+            color: var(--frieza-gold);
+        }
+
+        /* Display Area */
+        .display-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .mission-roll-card {
+            border: 1px solid var(--scouter-teal);
+            background: rgba(0, 242, 255, 0.05);
+            padding: 25px;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .payout-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .payout-box {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .success { border-color: #00ff66; color: #00ff66; }
+        .partial { border-color: #ffaa00; color: #ffaa00; }
+        .fail { border-color: #ff3333; color: #ff3333; }
+
+        .btn-roll {
+            background: var(--frieza-gold);
+            color: black;
+            border: none;
+            padding: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* Database View Styling */
+        .db-list {
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        .db-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            padding-bottom: 10px;
+        }
+        .db-name { color: var(--frieza-gold); font-weight: bold; text-transform: uppercase; }
+
+        .badge { font-weight: bold; color: var(--frieza-gold); }
+    </style>
+</head>
+<body>
+
+<div class="terminal-container">
+    <div class="header">
+        <div style="font-size: 1.1rem; letter-spacing: 2px;">FRIEZA FORCE // IMPERIAL COMMAND</div>
+        <div style="color: var(--fail-red);">[ AGE: 737 - SYSTEM LIVE ]</div>
+    </div>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <p style="font-size: 0.6rem; color: #888; margin-bottom: 15px;">SELECT VECTOR:</p>
+            <button class="nav-btn active" id="btn-conquest" onclick="setCategory('conquest')">Conquest & War</button>
+            <button class="nav-btn" id="btn-commerce" onclick="setCategory('commerce')">Trade & Economy</button>
+            <button class="nav-btn" id="btn-science" onclick="setCategory('science')">Science & Medical</button>
+            <button class="nav-btn" id="btn-blackops" onclick="setCategory('blackops')">Black Ops / Intel</button>
+            <hr style="width:100%; border:0; border-top:1px solid #333; margin: 10px 0;">
+            <button class="nav-btn" style="border-color: var(--frieza-gold);" onclick="viewDatabase()">Tactical Database</button>
+        </div>
+
+        <div class="display-area" id="main-display">
+            <h2 id="cat-title" style="color: var(--frieza-gold); margin-top: 0;">CONQUEST SECTOR</h2>
+            <p id="cat-desc" style="font-size: 0.9rem; color: #bbb;">Direct military annexation of sovereign worlds.</p>
+            <button class="btn-roll" onclick="generateMission()">Initialize Scouter Roll</button>
+            <div id="mission-result"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentCategory = 'conquest';
+    let isDatabaseView = false;
+
+    const missionData = {
+        conquest: [
+            { name: "Planetary Siege", el: "3-4", bi: "3", desc: "Break through global orbital defenses and establish a beachhead.", s: 20000, p: 8000, f: 0 },
+            { name: "General Execution", el: "4", bi: "4", desc: "Locate and eliminate the resisting world's top military commander.", s: 35000, p: 15000, f: "DEATH" },
+            { name: "Fortress Demolition", el: "2-3", bi: "2", desc: "Deploy heavy ordinance to destroy the local resistance bunker.", s: 12000, p: 5000, f: 500 },
+            { name: "Saiyan Frontline Support", el: "3", bi: "3", desc: "Keep pace with a squad of aggressive Saiyans during a city purge.", s: 15000, p: 7000, f: "INJURY" },
+            { name: "City-Level Scorched Earth", el: "4", bi: "3", desc: "Systematically level a capital city to break the remaining morale.", s: 25000, p: 10000, f: 0 },
+            { name: "Orbital Battery Sabotage", el: "3", bi: "3", desc: "Infiltrate and disable surface-to-space defense cannons.", s: 18000, p: 7500, f: "CAPTURED" },
+            { name: "Elite Guard Challenge", el: "4-5", bi: "5", desc: "Face the planet's strongest protector in ritualized single combat.", s: 60000, p: 25000, f: "TERMINATION" },
+            { name: "Trench Warfare Suppression", el: "2", bi: "2", desc: "Clear complex underground tunnel networks of stubborn survivors.", s: 9000, p: 4000, f: 200 },
+            { name: "Atmospheric Stabilizer Defense", el: "3", bi: "3", desc: "Guard the terraforming equipment from desperate rebel saboteurs.", s: 22000, p: 11000, f: "GEAR LOSS" },
+            { name: "Warlord Subjugation", el: "3-4", bi: "4", desc: "Assault a private moon-base and force a warlord to pay fealty.", s: 28000, p: 12000, f: "INJURY" },
+            { name: "Satellite Grid Wipe", el: "2-3", bi: "2", desc: "Manually board and destroy planetary communication satellites.", s: 11000, p: 5000, f: 0 },
+            { name: "Reinforcement Interception", el: "4", bi: "4", desc: "Engage and destroy an off-world relief fleet before they enter orbit.", s: 45000, p: 18000, f: "DEATH" }
+        ],
+        commerce: [
+            { name: "Luxury Tax Collection", el: "1-2", bi: "1", desc: "Visit merchant guilds and use intimidation to collect the monthly tribute.", s: 8000, p: 4000, f: 0 },
+            { name: "Pirate Interdiction", el: "2-3", bi: "2", desc: "Intercept and eliminate space pirates targeting Imperial cargo ships.", s: 15000, p: 6000, f: 1000 },
+            { name: "Slave Market Audit", el: "2", bi: "2", desc: "Process new 'labor assets' and ensure all are properly tagged for transport.", s: 10000, p: 5000, f: 500 },
+            { name: "Black Market Sting", el: "3", bi: "3", desc: "Infiltrate an illegal technology ring and shut down their operations.", s: 20000, p: 8000, f: "REPRIMAND" },
+            { name: "Refinery Protection", el: "3", bi: "2", desc: "Maintain order at a Katchin refinery during a violent worker strike.", s: 14000, p: 7000, f: "DEBT" },
+            { name: "Smuggler Tracking", el: "2", bi: "1", desc: "Follow a lead through a crowded spaceport to locate a secret pirate cove.", s: 7000, p: 3000, f: 0 },
+            { name: "Trade Agreement 'Negotiation'", el: "3", bi: "2", desc: "Force a local system into a 90% imperial tax bracket via 'diplomacy'.", s: 19000, p: 9000, f: 0 },
+            { name: "Zeni Transport Escort", el: "4", bi: "3", desc: "Safeguard a massive shipment of hard currency between planetary systems.", s: 30000, p: 12000, f: "TOTAL LOSS" },
+            { name: "Resource Claim Dispute", el: "3", bi: "3", desc: "Forcefully remove a rival mining corp from a Frieza-claimed mineral vein.", s: 16000, p: 8000, f: 1000 },
+            { name: "Customs Inspection", el: "1", bi: "1", desc: "Board civilian vessels and search for contraband or anti-imperial flyers.", s: 4000, p: 2000, f: 0 },
+            { name: "Bounty Hunter Contract", el: "4", bi: "4", desc: "Hunt down and return a high-value debt-dodger hiding in the outer rim.", s: 40000, p: 15000, f: "WANTED" },
+            { name: "Industrial Espionage", el: "3", bi: "2", desc: "Steal mining blueprints from a rival faction's secure database.", s: 18000, p: 8000, f: "EXPOSED" }
+        ],
+        science: [
+            { name: "Biological Sample Retrieval", el: "2-3", bi: "2", desc: "Capture a live, uninjured specimen of a lethal alien species for study.", s: 12000, p: 5000, f: "INFECTION" },
+            { name: "Scouter Tech Calibration", el: "1", bi: "1", desc: "Test experimental range-finding software under live combat stress.", s: 5000, p: 2500, f: 0 },
+            { name: "Gravity Training Lab Oversight", el: "4", bi: "3", desc: "Manage the safety protocols of a 100x gravity testing facility.", s: 30000, p: 12000, f: "MAIMED" },
+            { name: "Medical Relief: Bio-Warfare", el: "3-4", bi: "2", desc: "Secure a research facility hit by chemical weapons and extract data.", s: 18000, p: 9000, f: 0 },
+            { name: "Cyborg Component Looting", el: "3", bi: "3", desc: "Salvage advanced neural links from a fallen mechanical civilization.", s: 15000, p: 7000, f: "ELECTROCUTED" },
+            { name: "Katchin Mineral Survey", el: "2", bi: "2", desc: "Locate and mark raw Katchin deposits for elite armor manufacturing.", s: 13000, p: 6000, f: "GEAR BREAK" },
+            { name: "Healing Pod Synthesis", el: "4", bi: "2", desc: "Guard a lab as they refine the chemical 'Liquid Medic' used in pods.", s: 25000, p: 10000, f: 0 },
+            { name: "Radiation Field Mapping", el: "3", bi: "1", desc: "Manually deploy sensors in a lethal high-radiation wasteland.", s: 20000, p: 8000, f: "CELL DAMAGE" },
+            { name: "Energy Reading: Power Spike", el: "5", bi: "4", desc: "Investigate a massive, unexplained energy signature on a dead moon.", s: 55000, p: 20000, f: "DEATH" },
+            { name: "Virus Containment", el: "4", bi: "3", desc: "Identify and purge a military base infected by an alien parasite.", s: 32000, p: 14000, f: "OUTBREAK" },
+            { name: "Cloning Vats Security", el: "3", bi: "4", desc: "Terminate defective, high-power clone prototypes that escaped their vats.", s: 21000, p: 10000, f: "INJURY" }
+        ],
+        blackops: [
+            { name: "Traitor Silence Protocol", el: "4-5", bi: "4", desc: "Track and execute a rogue soldier before they leak imperial routes.", s: 50000, p: 20000, f: "TERMINATION" },
+            { name: "Saiyan Insurrection Spy", el: "3-4", bi: "3", desc: "Infiltrate a squad of suspicious Saiyans and report any talk of 'rebellion'.", s: 25000, p: 10000, f: "BETRAYED" },
+            { name: "Evidence Scrubbing", el: "4", bi: "3", desc: "Wipe all digital and physical logs of an unsanctioned failure by Command.", s: 30000, p: 15000, f: 0 },
+            { name: "Shadow Recruitment", el: "2-3", bi: "2", desc: "Locate and 'convince' expendable mercenaries to take a suicide mission.", s: 12000, p: 6000, f: 500 },
+            { name: "Assassination: Rebel King", el: "5", bi: "5", desc: "Assassinate a planetary monarch inside their most secure vault.", s: 75000, p: 30000, f: "DEATH" },
+            { name: "Propaganda Broadcast", el: "2", bi: "1", desc: "Hijack a global comms network to play Lord Frieza's 'Submission Decree'.", s: 8000, p: 3000, f: "EXPOSED" },
+            { name: "False Flag Operation", el: "4", bi: "3", desc: "Commit an atrocity while wearing a rival's uniform to spark a civil war.", s: 33000, p: 14000, f: "JAIL" },
+            { name: "Scouter Jamming", el: "3", bi: "2", desc: "Disable an enemy fleet's sensor array to allow a surprise bombardment.", s: 17000, p: 7000, f: 0 },
+            { name: "Kidnap: Key Scientist", el: "3-4", bi: "3", desc: "Bag-and-tag a genius bio-engineer before a rival force can recruit them.", s: 22000, p: 10000, f: "FAIL" },
+            { name: "Deep Cover Sleeper", el: "4", bi: "2", desc: "Live among a native population for a year to identify resistance leaders.", s: 40000, p: 15000, f: "LOST" },
+            { name: "Sabotage: Food Supply", el: "3", bi: "2", desc: "Introduce toxins into a planet's main food processing plants.", s: 19000, p: 8000, f: 0 }
+        ]
+    };
+
+    function setCategory(cat) {
+        isDatabaseView = false;
+        currentCategory = cat;
+        
+        // Update Sidebar
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${cat}`).classList.add('active');
+
+        // Reset Display
+        const display = document.getElementById('main-display');
+        const descriptions = {
+            conquest: "Direct military annexation of sovereign worlds.",
+            commerce: "Managing wealth, logistics, and slave trades for the Empire.",
+            science: "Researching biological weapons and rejuvenation technology.",
+            blackops: "High-stakes infiltration, assassination, and betrayal."
+        };
+
+        display.innerHTML = `
+            <h2 id="cat-title" style="color: var(--frieza-gold); margin-top: 0;">${cat.toUpperCase()} SECTOR</h2>
+            <p style="font-size: 0.9rem; color: #bbb;">${descriptions[cat]}</p>
+            <button class="btn-roll" onclick="generateMission()">Initialize Scouter Roll</button>
+            <div id="mission-result"></div>
+        `;
+    }
+
+    function generateMission() {
+        const pool = missionData[currentCategory];
+        const m = pool[Math.floor(Math.random() * pool.length)];
+        const res = document.getElementById('mission-result');
+        
+        res.innerHTML = `
+            <div class="mission-roll-card">
+                <div style="font-size:1.3rem; font-weight:bold; color:var(--frieza-gold);">${m.name}</div>
+                <div style="margin:10px 0; color:#ddd; font-style:italic;">"${m.desc}"</div>
+                <div style="font-size:0.8rem; margin-bottom:15px;">
+                    ENTRY LEVEL: <span class="badge">${m.el}</span> | 
+                    BATTLE INDEX: <span class="badge">${m.bi}</span>
+                </div>
+                
+                <div class="payout-row">
+                    <div class="payout-box success">SUCCESS<br><strong>${typeof m.s === 'number' ? m.s.toLocaleString() + ' Z' : m.s}</strong></div>
+                    <div class="payout-box partial">PARTIAL<br><strong>${typeof m.p === 'number' ? m.p.toLocaleString() + ' Z' : m.p}</strong></div>
+                    <div class="payout-box fail">FAILURE<br><strong>${typeof m.f === 'number' ? m.f.toLocaleString() + ' Z' : m.f}</strong></div>
+                </div>
+                
+                <div style="font-size:0.7rem; color:#666; margin-top:20px; border-top:1px solid #444; padding-top:10px;">
+                    SCAN COMPLETE. ROLL 1D100 AGAINST BI TO DETERMINE OUTCOME. <br>
+                    CONFIRM RESULTS WITH COMMANDERS @SHADOWKING OR @NEGATIVE.
+                </div>
+            </div>
+        `;
+    }
+
+    function viewDatabase() {
+        isDatabaseView = true;
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        
+        const display = document.getElementById('main-display');
+        let html = `<h2 style="color: var(--frieza-gold); margin-top: 0;">TACTICAL DATABASE (46 DIRECTIVES)</h2>`;
+        
+        for (const [sector, missions] of Object.entries(missionData)) {
+            html += `<h3 style="color: var(--scouter-teal); border-bottom: 1px solid; margin-top:30px;">${sector.toUpperCase()}</h3><div class="db-list">`;
+            missions.forEach(m => {
+                html += `
+                    <div class="db-item">
+                        <div class="db-name">${m.name} <span style="color:#666; font-size:0.7rem;">[EL:${m.el}]</span></div>
+                        <div style="color:#bbb;">${m.desc}</div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
+        
+        display.innerHTML = html;
+    }
+
+    // Initialize
+    setCategory('conquest');
+</script>
+
+</body>
+</html>

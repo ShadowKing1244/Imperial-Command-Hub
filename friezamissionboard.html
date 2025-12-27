@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frieza Force Command Terminal</title>
+    <style>
+        :root {
+            --frieza-purple: #6a0dad;
+            --frieza-light: #e0b0ff;
+            --scouter-pink: #ff007f;
+            --scouter-bg: rgba(20, 0, 40, 0.95);
+            --success-green: #00ff00;
+            --partial-orange: #ffaa00;
+            --fail-red: #ff3333;
+        }
+
+        body {
+            background-color: #050010;
+            background-image: radial-gradient(circle, #1a0033 0%, #050010 100%);
+            color: var(--frieza-light);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .terminal {
+            width: 100%;
+            max-width: 850px;
+            background: var(--scouter-bg);
+            border: 2px solid var(--scouter-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+            border-radius: 10px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .hud-header {
+            border-bottom: 2px solid var(--frieza-purple);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1 { color: var(--scouter-pink); text-transform: uppercase; letter-spacing: 3px; margin: 5px; }
+
+        /* MISSION ROLLER BOX */
+        .mission-roller {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--frieza-purple);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: var(--frieza-purple);
+            color: white;
+            border: 1px solid var(--scouter-pink);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--scouter-pink); box-shadow: 0 0 10px var(--scouter-pink); }
+
+        #mission-display {
+            margin-top: 20px;
+            min-height: 100px;
+            text-align: left;
+            border-left: 3px solid var(--scouter-pink);
+            padding-left: 15px;
+        }
+
+        /* TABLES */
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 20px; }
+        th { color: var(--scouter-pink); border-bottom: 1px solid var(--frieza-purple); padding: 10px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid rgba(106, 13, 173, 0.3); }
+
+        .zeni-table td { color: var(--success-green); }
+
+        /* CONTACT SECTION */
+        .contact-box {
+            margin-top: 30px;
+            border: 1px dashed var(--scouter-pink);
+            padding: 15px;
+            background: rgba(255, 0, 127, 0.05);
+        }
+
+        .contact-title { color: var(--scouter-pink); font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; }
+        
+        .mod-name { color: #fff; font-weight: bold; text-shadow: 0 0 5px var(--frieza-purple); }
+
+        .status-tag { font-size: 0.7rem; padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+        .success { color: var(--success-green); }
+        .partial { color: var(--partial-orange); }
+        .fail { color: var(--fail-red); }
+    </style>
+</head>
+<body>
+
+<div class="terminal">
+    <div class="hud-header">
+        <h1>Frieza Force Mission Interface</h1>
+        <div>SYSTEM STATUS: <span style="color:var(--success-green)">CONNECTED</span> | AGE: 737</div>
+    </div>
+
+    <div class="mission-roller">
+        <button onclick="rollMission()">Initialize Mission Request</button>
+        <div id="mission-display">
+            <p style="color: #666;">Waiting for soldier authorization...</p>
+        </div>
+    </div>
+
+    <div class="contact-title">Standard Payout Matrix (Zeni)</div>
+    <table class="zeni-table">
+        <tr>
+            <th>Difficulty (EL)</th>
+            <th>Success</th>
+            <th>Partial</th>
+            <th>Failure</th>
+        </tr>
+        <tr>
+            <td>EL 1–2 (Common)</td>
+            <td>5,000 Z</td>
+            <td>2,500 Z</td>
+            <td>500 Z</td>
+        </tr>
+        <tr>
+            <td>EL 3–4 (Uncommon)</td>
+            <td>15,000 Z</td>
+            <td>7,500 Z</td>
+            <td>1,000 Z</td>
+        </tr>
+        <tr>
+            <td>EL 4–5 (Rare/Elite)</td>
+            <td>50,000 Z</td>
+            <td>20,000 Z</td>
+            <td>0 Z (Medical Debt)</td>
+        </tr>
+    </table>
+
+    <div class="contact-box">
+        <span class="contact-title">Direct Command Intervention Required:</span>
+        <ul>
+            <li>For <strong>Special Operations</strong> or <strong>Black Ops</strong> missions.</li>
+            <li>If your Power Level exceeds <strong>EL 5</strong>.</li>
+            <li>To report <strong>Insubordination</strong> or <strong>Saiyan Uprisings</strong>.</li>
+        </ul>
+        <p>CONTACT ENCRYPTED LINES: <span class="mod-name">@ShadowKing</span> or <span class="mod-name">@Negative</span></p>
+    </div>
+</div>
+
+<script>
+    const missions = [
+        { name: "Planetary Patrol", el: "1-2", risk: "5-10%", pay: [5000, 2500, 500], growth: "+1-2 Temp PL" },
+        { name: "Slave Capture", el: "1-2", risk: "5-10%", pay: [5000, 2500, 500], growth: "+1-2 Temp PL" },
+        { name: "Reconnaissance", el: "2", risk: "10%", pay: [5000, 2500, 500], growth: "+1-2 Temp PL" },
+        { name: "Rebel Cell Elimination", el: "2-3", risk: "15%", pay: [15000, 7500, 1000], growth: "+2-3 Temp PL" },
+        { name: "Hostile World Pacification", el: "3", risk: "20%", pay: [15000, 7500, 1000], growth: "+2-3 Temp PL" },
+        { name: "Saiyan Squad Deployment", el: "3-4", risk: "30%", pay: [20000, 10000, 1500], growth: "+4 Perm PL" },
+        { name: "Extermination Orders", el: "4", risk: "40%", pay: [50000, 20000, 0], growth: "+3-4 Perm PL" },
+        { name: "Asset Recovery (Black Ops)", el: "4-5", risk: "60%", pay: [75000, 30000, 0], growth: "+5 Perm PL" }
+    ];
+
+    function rollMission() {
+        const rand = Math.floor(Math.random() * missions.length);
+        const m = missions[rand];
+        const display = document.getElementById('mission-display');
+        
+        display.innerHTML = `
+            <strong style="color:var(--scouter-pink); font-size:1.2rem;">${m.name}</strong><br>
+            <span style="font-size:0.9rem">
+                EL Rating: <span class="success">${m.el}</span> | 
+                Risk Factor: <span class="fail">${m.risk}</span> | 
+                Growth: <span class="partial">${m.growth}</span>
+            </span>
+            <hr style="border:0; border-top:1px solid #333">
+            <strong>PAYOUT DATA:</strong><br>
+            <span class="success">Success: ${m.pay[0].toLocaleString()} Z</span> | 
+            <span class="partial">Partial: ${m.pay[1].toLocaleString()} Z</span> | 
+            <span class="fail">Fail: ${m.pay[2].toLocaleString()} Z</span>
+        `;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Personality</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+
+        .continue-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff; /* Blue button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 50px;
+        }
+
+        .continue-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Personality</h1>
+    
+    <!-- Display area for the randomly generated personality -->
+    <div id="personalityDisplay">
+        <p>Your personality:</p>
+        <p id="personality"></p>
+    </div>
+
+    <!-- Button to generate a random personality -->
+    <button class="button" onclick="generatePersonality()">What's my personality?</button>
+
+    <!-- Button to continue to the next page -->
+    <a href="wish.html" class="continue-button">Continue</a>
+
+    <script>
+        // List of possible personalities
+        const personalities = [
+            "Friendly",
+            "Confident",
+            "Optimistic",
+            "Introverted",
+            "Extroverted",
+            "Ambitious",
+            "Empathetic",
+            "Logical",
+            "Creative",
+            "Adventurous",
+            "Caring",
+            "Stubborn",
+            "Independent",
+            "Analytical",
+            "Impulsive",
+            "Loyal",
+            "Generous",
+            "Competitive",
+            "Sarcastic",
+            "Perfectionist",
+            "Multiple Personality",
+            "Split Personality",
+            "Bipolar",
+            "Eccentric",
+            "Reserved"
+        ];
+
+        // Function to generate a random personality
+        function generatePersonality() {
+            const randomIndex = Math.floor(Math.random() * personalities.length);
+            const randomPersonality = personalities[randomIndex];
+            document.getElementById("personality").textContent = randomPersonality;
+        }
+    </script>
+</body>
+</html>

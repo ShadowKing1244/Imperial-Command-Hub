@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FRIEZA FORCE // SYSTEM-OS v13.0</title>
+    <style>
+        :root {
+            --frieza-purple: #8a2be2;
+            --scouter-teal: #00f2ff;
+            --frieza-gold: #ffd700;
+            --fail-red: #ff0033;
+            --bg-dark: #050008;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--scouter-teal);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* CRT Scanline Effect */
+        body::before {
+            content: " ";
+            position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 100; pointer-events: none;
+        }
+
+        nav {
+            width: var(--sidebar-width);
+            background: rgba(15, 0, 30, 0.98);
+            border-right: 2px solid var(--frieza-purple);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 20;
+            overflow-y: auto;
+        }
+
+        .user-profile {
+            padding: 15px;
+            border: 1px solid var(--frieza-purple);
+            background: rgba(138, 43, 226, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .stat-line { font-size: 0.75rem; margin-bottom: 5px; }
+        .stat-val { color: var(--frieza-gold); font-weight: bold; }
+
+        .nav-category { margin-bottom: 20px; }
+        .category-label { 
+            font-size: 0.65rem; 
+            color: var(--frieza-purple); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            color: #ddd;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s all;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--frieza-purple);
+            color: var(--frieza-gold);
+            border-color: var(--frieza-gold);
+            padding-left: 15px;
+        }
+
+        .viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+        }
+
+        .top-bar {
+            height: 45px;
+            background: #0a0a0a;
+            border-bottom: 1px solid var(--frieza-purple);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            justify-content: space-between;
+        }
+
+        .view-title {
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: var(--frieza-gold);
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-size: 1.1rem; font-weight: bold; color: var(--frieza-gold); margin-bottom: 20px;">IMPERIAL OS v13.0</div>
+
+        <div class="user-profile">
+            <div class="stat-line">UNIT: <span class="stat-val">ELITE-SOLDIER</span></div>
+            <div class="stat-line">ZENI: <span id="master-zeni" class="stat-val">0</span> Z</div>
+        </div>
+
+        <div class="nav-category">
+            <div class="category-label">High Command</div>
+            <button class="nav-btn active" onclick="loadPage('friezaforcecommand.html', 'Imperial Command', this)">friezaforcecommand.html</button>
+            <button class="nav-btn" onclick="loadPage('friezamissionboard.html', 'Mission Board', this)">friezamissionboard.html</button>
+            <button class="nav-btn" onclick="loadPage('737eventmissions.html', 'Event Missions', this)">737eventmissions.html</button>
+        </div>
+
+        <div class="nav-category">
+            <div class="category-label">Combat Simulation</div>
+            <button class="nav-btn" onclick="loadPage('dbz.html', 'Z-Warriors Game', this)">dbz.html</button>
+        </div>
+
+        <div class="nav-category">
+            <div class="category-label">Intelligence & Logistics</div>
+            <button class="nav-btn" onclick="loadPage('scouterdecoder2.html', 'Scouter Decoder', this)">scouterdecoder2.html</button>
+            <button class="nav-btn" onclick="loadPage('cerealianeyetest.html', 'Cerealian Eye Test', this)">cerealianeyetest.html</button>
+            <button class="nav-btn" onclick="loadPage('spacesideassistance.html', 'Spaceside Assist', this)">spacesideassistance.html</button>
+        </div>
+
+        <div class="nav-category">
+            <div class="category-label">Recreation & Surveillance</div>
+            <button class="nav-btn" onclick="loadPage('saibamangambling.html', 'Saibaman Gambling', this)">saibamangambling.html</button>
+            <button class="nav-btn" onclick="loadPage('friezaforcenightshift.html', 'Night Shift Cam', this)">friezaforcenightshift.html</button>
+        </div>
+    </nav>
+
+    <div class="viewport">
+        <div class="top-bar">
+            <div class="view-title" id="display-title">LOADING: FRIEZAFORCECOMMAND.HTML</div>
+            <div style="font-size: 0.6rem; color: #666;">UPLINK SECURE // AGE 737</div>
+        </div>
+        <iframe id="view-frame" src="friezaforcecommand.html"></iframe>
+    </div>
+
+    <script>
+        // Data Sync logic for LocalStorage
+        function syncData() {
+            const zeni = localStorage.getItem('frieza_zeni') || "5000";
+            document.getElementById('master-zeni').innerText = parseInt(zeni).toLocaleString();
+        }
+
+        function loadPage(fileName, displayLabel, btnElement) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            document.getElementById('display-title').innerText = "LOADING: " + fileName.toUpperCase();
+            document.getElementById('view-frame').src = fileName;
+            syncData();
+        }
+
+        setInterval(syncData, 1000);
+        syncData();
+    </script>
+</body>
+</html>

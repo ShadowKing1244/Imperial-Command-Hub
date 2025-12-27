@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shenron's Fortunes</title>
+    <style>
+        body {
+            background-color: black; /* Black background */
+            color: red; /* Red text */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .fortune-box {
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333; /* Dark gray box */
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Shenron's Fortunes</h1>
+    <div class="fortune-box" id="fortuneBox">
+        <!-- Fortune will be displayed here -->
+    </div>
+    <button class="button" onclick="revealFortune()">What's My Fortune?</button>
+    <button class="button" onclick="location.href='credits.html'">Continue</button>
+
+    <script>
+        const fortunes = [
+            "Your power will rise like the dawn, but beware the shadows that lurk within.",
+            "A great battle lies ahead, where allies will become enemies and enemies, allies.",
+            "In the heat of battle, you will unlock a hidden potential, but at what cost?",
+            "A journey to a distant land will reveal secrets long buried, but can you handle the truth?",
+            "The Dragon Balls will grant your wish, but remember: every wish has its consequences.",
+            "A long-lost friend will return when you least expect it, but their motives may not be pure.",
+            "A powerful adversary will test your limits, pushing you to the brink of despair.",
+            "A new technique will awaken within you, but its mastery will require great sacrifice.",
+            "The path to victory is paved with uncertainty, but trust in your instincts, and you will prevail.",
+            "A dark force looms on the horizon, threatening to consume everything you hold dear.",
+            "A chance encounter will lead you to a forbidden power, but its allure may lead to your downfall.",
+            "An ancient prophecy foretells of your destiny, but only you can shape the outcome.",
+            "A fateful decision will alter the course of history, setting in motion events beyond your control.",
+            "A mysterious stranger will offer you a deal too good to be true, but beware their hidden agenda.",
+            "The past will come back to haunt you, forcing you to confront your greatest fears."
+        ];
+
+        function revealFortune() {
+            const randomIndex = Math.floor(Math.random() * fortunes.length);
+            const fortuneBox = document.getElementById("fortuneBox");
+            fortuneBox.innerHTML = `<p>${fortunes[randomIndex]}</p>`;
+        }
+    </script>
+</body>
+</html>

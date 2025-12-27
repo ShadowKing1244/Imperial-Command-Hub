@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator by ShadøwKing</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background resembling space */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ff9500; /* Orange border for input */
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>DBZ OC Generator</h1>
+    <p>Enter your OC name:</p>
+    <input type="text" id="ocName" placeholder="Your OC name" required>
+    <button class="button" onclick="continueToBirth()">Continue</button>
+
+    <script>
+        function continueToBirth() {
+            var ocName = document.getElementById("ocName").value;
+            // Assuming birth.html is the next page after entering the OC name
+            window.location.href = "birth.html?ocName=" + encodeURIComponent(ocName);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porunga's Visions</title>
+    <style>
+        body {
+            background-color: black; /* Black background */
+            color: green; /* Green text */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .fortune-box {
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333; /* Dark gray box */
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Porunga's Visions</h1>
+    <div class="fortune-box" id="fortuneBox">
+        <!-- Fortune will be displayed here -->
+    </div>
+    <button class="button" onclick="revealFortune()">What's My Vision?</button>
+    <button class="button" onclick="location.href='credits.html'">Continue</button>
+
+    <script>
+        const visions = [
+            "You will unite the Namekian clans under one banner, bringing peace to the planet.",
+            "A great evil will threaten Namek's existence, and only you can stop it.",
+            "The Dragon Balls will grant your wish, but at what cost to Namek?",
+            "You will become a legendary figure among the Namekian people, revered for your wisdom and courage.",
+            "A dark force will rise from the depths of Namek's history, seeking vengeance upon its inhabitants.",
+            "You will unlock the ancient secrets of Namek's past, uncovering hidden treasures and forbidden knowledge.",
+            "A powerful ally will emerge from the shadows, aiding you in your quest to protect Namek.",
+            "The fate of Namek hangs in the balance, and only you can determine its destiny.",
+            "You will embark on a journey across Namek's vast landscape, encountering both friends and foes along the way.",
+            "A new era of prosperity will dawn upon Namek, ushering in a period of peace and prosperity for all.",
+            "You will be tested by the trials of Namek, facing challenges that will push you to your limits.",
+            "The Namekian Dragon Balls will reveal their true power, granting you the strength to defend your home.",
+            "You will forge deep bonds with the Namekian people, earning their trust and respect as a true champion of their cause.",
+            "A long-forgotten prophecy will come to fruition, heralding a new age of enlightenment for Namek.",
+            "You will be hailed as a hero throughout Namek, celebrated for your selfless deeds and unwavering resolve."
+        ];
+
+        function revealFortune() {
+            const randomIndex = Math.floor(Math.random() * visions.length);
+            const fortuneBox = document.getElementById("fortuneBox");
+            fortuneBox.innerHTML = `<p>${visions[randomIndex]}</p>`;
+        }
+    </script>
+</body>
+</html>

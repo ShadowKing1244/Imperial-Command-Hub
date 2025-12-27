@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLANET VEGETA: EMERGENCY INTERFACE</title>
+    <style>
+        :root {
+            --emergency-red: #ff0000;
+            --frieza-gold: #ffd700;
+            --terminal-green: #00ff41;
+            --bg-dark: #050000;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle, #200000 0%, #050000 100%);
+            color: #ffcccc;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .terminal-frame {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(10, 0, 0, 0.95);
+            border: 2px solid var(--emergency-red);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+            padding: 30px;
+            position: relative;
+        }
+
+        .header-box {
+            text-align: center;
+            border-bottom: 1px solid var(--emergency-red);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .flashing {
+            animation: blink 1s infinite;
+            color: var(--emergency-red);
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* BUTTON STYLE */
+        .roll-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .btn-intercept {
+            background: #400000;
+            color: var(--frieza-gold);
+            border: 2px solid var(--frieza-gold);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-intercept:hover {
+            background: var(--frieza-gold);
+            color: black;
+        }
+
+        /* MISSION OUTPUT */
+        #mission-output {
+            min-height: 250px;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid #330000;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .mission-header {
+            font-size: 1.4rem;
+            color: var(--frieza-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .data-label { color: var(--emergency-red); font-weight: bold; }
+        .data-value { color: white; margin-right: 15px; }
+
+        .paranoia-alert {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px dashed var(--frieza-gold);
+            background: rgba(255, 215, 0, 0.1);
+            color: #fff;
+        }
+
+        .payout-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            background: #1a0000;
+            padding: 10px;
+        }
+
+        .payout-item { font-size: 0.9rem; }
+        .success { color: var(--terminal-green); }
+        .partial { color: orange; }
+        .fail { color: #ff5555; }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal-frame">
+    <div class="header-box">
+        <div class="flashing">⚠️ CRITICAL EVENT DETECTED ⚠️</div>
+        <h1 style="color:white; margin:10px 0;">PLANET VEGETA MONITOR (AGE 737)</h1>
+        <p style="font-size: 0.8rem;">ENCRYPTED LINE: SHADOWKING // NEGATIVE</p>
+    </div>
+
+    <div class="roll-container">
+        <button class="btn-intercept" onclick="rollEventMission()">Intercept Scouter Comms</button>
+    </div>
+
+    <div id="mission-output">
+        <p style="text-align:center; color:#444;">[ SYSTEM IDLE - AWAITING INPUT ]</p>
+    </div>
+
+    <div class="footer">
+        UNAUTHORIZED ACCESS SUBJECT TO IMMEDIATE DISINTEGRATION.
+    </div>
+</div>
+
+<script>
+const eventMissions = [
+    {
+        id: 1, name: "Saiyan Surveillance Order", rarity: "Uncommon", el: "2-3", 
+        desc: "Monitor Saiyan squads for disobedience or missing members.",
+        paranoia: "REWARD: Accuse a teammate of 'Unusual Growth' for a rank promotion.",
+        pay: [8000, 4000, 500]
+    },
+    {
+        id: 2, name: "Missing Squad Investigation", rarity: "Uncommon", el: "3", 
+        desc: "Locate teams that went dark. Look for signs of desertion.",
+        paranoia: "BLAME SHIFT: Falsifying evidence against another squad increases your Zeni by 20%.",
+        pay: [12000, 6000, 1000]
+    },
+    {
+        id: 3, name: "Scouter Calibration Test", rarity: "Common", el: "2", 
+        desc: "Ensure all scouters are logging power spikes correctly.",
+        paranoia: "TRAP: Saiyans who fail to report their own power spikes are flagged as traitors.",
+        pay: [5000, 2500, 500]
+    },
+    {
+        id: 4, name: "Emergency Planet Recall Drill", rarity: "Rare", el: "3", 
+        desc: "Force all warriors to return to base immediately.",
+        paranoia: "RAT: Report anyone who hesitates or warns others to stay in deep space.",
+        pay: [20000, 10000, 0]
+    },
+    {
+        id: 5, name: "Saiyan Insurrection Suppression", rarity: "Rare", el: "4", 
+        desc: "Eliminate rebel cells identified by loyalist informants.",
+        paranoia: "PURGE: Loyalty is proven by the number of Saiyan tails brought back as trophies.",
+        pay: [40000, 15000, "TERMINATION"]
+    },
+    {
+        id: 6, name: "Planet Vegeta Defense Assessment", rarity: "Rare", el: "3-4", 
+        desc: "Map fleet readiness. Identify weak points in the global shield.",
+        paranoia: "IGNORANCE: Officers providing this intel are unknowingly signing their death warrants.",
+        pay: [25000, 12000, 2000]
+    },
+    {
+        id: 7, name: "Elite Arrival Escort", rarity: "Rare", el: "4", 
+        desc: "Clear path for Frieza's inner circle. Remove 'distractions'.",
+        paranoia: "INTERROGATION: Elites will reward you for naming 'unstable' brothers.",
+        pay: [45000, 20000, 0]
+    },
+    {
+        id: 8, name: "Information Erasure Protocol", rarity: "Very Rare", el: "4-5", 
+        desc: "Destroy database records and silence any witnesses to the order.",
+        paranoia: "CLEANUP: Cooperation ensures survival... until the records are fully gone.",
+        pay: [60000, 25000, "TERMINATION"]
+    },
+    {
+        id: 9, name: "Saiyan Child Registry Audit", rarity: "Very Rare", el: "3", 
+        desc: "Log infant power levels. Identify 'low-class' vs 'danger' levels.",
+        paranoia: "SACRIFICE: Parents pressured to hand over 'irregular' children to prove loyalty.",
+        pay: [30000, 10000, 1000]
+    },
+    {
+        id: 10, name: "Planetary Evacuation Denial", rarity: "Legendary", el: "5", 
+        desc: "Blockade the spaceports. No one leaves Planet Vegeta.",
+        paranoia: "THE LIE: You are promised a seat on Frieza's ship if you stop 10 escapees. (Lies).",
+        pay: [150000, 50000, "DEATH"]
+    }
+];
+
+function rollEventMission() {
+    const output = document.getElementById('mission-output');
+    const roll = Math.floor(Math.random() * eventMissions.length);
+    const m = eventMissions[roll];
+
+    output.innerHTML = `
+        <div class="mission-header">#${m.id} ${m.name}</div>
+        <div>
+            <span class="data-label">RARITY:</span> <span class="data-value">${m.rarity}</span>
+            <span class="data-label">EL:</span> <span class="data-value">${m.el}</span>
+        </div>
+        <p style="color:#bbb; margin:15px 0;">${m.desc}</p>
+        
+        <div class="paranoia-alert">
+            <strong style="color:var(--frieza-gold)">[!] PARANOIA PROTOCOL:</strong><br>
+            ${m.paranoia}
+        </div>
+
+        <div class="payout-box">
+            <div class="payout-item success">SUCCESS: ${m.pay[0].toLocaleString()} Z</div>
+            <div class="payout-item partial">PARTIAL: ${m.pay[1].toLocaleString()} Z</div>
+            <div class="payout-item fail">FAILURE: ${m.pay[2].toLocaleString()}</div>
+        </div>
+    `;
+}
+</script>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dragon Ball Cerealian Training</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+  body {
+    margin: 0; 
+    background: #0f3d0f;
+    font-family: 'Orbitron', monospace;
+    color: #a1f2a1;
+    overflow: hidden;
+    cursor: none; /* hide default cursor */
+  }
+  #gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    user-select: none;
+  }
+  .targetWord {
+    position: absolute;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #6efc6e;
+    text-shadow: 0 0 8px #1bd31b;
+    animation: blink 1.5s infinite;
+    cursor: crosshair;
+    user-select: none;
+  }
+  @keyframes blink {
+    0%, 50%, 100% {opacity: 1;}
+    25%, 75% {opacity: 0.2;}
+  }
+  #scoreboard {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 1.3rem;
+    z-index: 999;
+  }
+  #timer {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 1.3rem;
+    z-index: 999;
+  }
+  #message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #073407cc;
+    padding: 30px 40px;
+    border: 2px solid #30ee30;
+    border-radius: 12px;
+    font-size: 2rem;
+    display: none;
+    z-index: 1000;
+    text-align: center;
+  }
+  /* Custom aiming reticle */
+  #aimCursor {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+  }
+  #aimCursor:before, #aimCursor:after {
+    content: '';
+    position: absolute;
+    background: #00ff00;
+    border-radius: 2px;
+  }
+  #aimCursor:before {
+    top: 18px;
+    left: 0;
+    width: 40px;
+    height: 4px;
+  }
+  #aimCursor:after {
+    left: 18px;
+    top: 0;
+    width: 4px;
+    height: 40px;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer"></div>
+<div id="scoreboard">Score: 0</div>
+<div id="timer">Time: 60</div>
+<div id="message"></div>
+<div id="aimCursor"></div>
+
+<script>
+(() => {
+  const gameContainer = document.getElementById('gameContainer');
+  const scoreboard = document.getElementById('scoreboard');
+  const timerDisplay = document.getElementById('timer');
+  const message = document.getElementById('message');
+  const aimCursor = document.getElementById('aimCursor');
+
+  // Words associated with Frieza and Ginyu Force
+  const words = [
+    "Frieza",
+    "Ginyu",
+    "Dodoria",
+    "Zarbon",
+    "Captain Ginyu",
+    "Jeice",
+    "Burter",
+    "Recoome",
+    "Guldo",
+    "King Cold"
+  ];
+
+  let score = 0;
+  let timeLeft = 60; // seconds
+  let activeTargets = [];
+  let gameInterval;
+  let targetInterval;
+  let wordDisappearTimeouts = [];
+
+  // Track mouse to move custom aim cursor
+  window.addEventListener('mousemove', (e) => {
+    aimCursor.style.left = e.clientX - 20 + 'px';
+    aimCursor.style.top = e.clientY - 20 + 'px';
+  });
+
+  // Create a target word element
+  function createTarget() {
+    const word = words[Math.floor(Math.random() * words.length)];
+    const target = document.createElement('div');
+    target.classList.add('targetWord');
+    target.textContent = word;
+
+    // Random position within viewport with some margin
+    const margin = 80;
+    const x = Math.random() * (window.innerWidth - margin*2) + margin;
+    const y = Math.random() * (window.innerHeight - margin*2) + margin;
+    target.style.left = x + 'px';
+    target.style.top = y + 'px';
+
+    // Add to container and active list
+    gameContainer.appendChild(target);
+    activeTargets.push(target);
+
+    // Target teleport every 1-2 seconds randomly
+    const teleportTime = Math.random() * 1000 + 1000;
+    const teleportInterval = setInterval(() => {
+      const newX = Math.random() * (window.innerWidth - margin*2) + margin;
+      const newY = Math.random() * (window.innerHeight - margin*2) + margin;
+      target.style.left = newX + 'px';
+      target.style.top = newY + 'px';
+    }, teleportTime);
+
+    target.dataset.teleportInterval = teleportInterval;
+
+    // Remove the word after 2.5 to 4 seconds (disappear)
+    const disappearTime = Math.random() * 1500 + 2500;
+    const disappearTimeout = setTimeout(() => {
+      removeTarget(target);
+    }, disappearTime);
+    wordDisappearTimeouts.push(disappearTimeout);
+
+    // Click event to "shoot"
+    target.addEventListener('click', () => {
+      score++;
+      scoreboard.textContent = `Score: ${score}`;
+      removeTarget(target);
+    });
+  }
+
+  function removeTarget(target) {
+    if (!target) return;
+    // Clear teleport interval
+    clearInterval(target.dataset.teleportInterval);
+    // Remove from DOM and active list
+    gameContainer.removeChild(target);
+    activeTargets = activeTargets.filter(t => t !== target);
+  }
+
+  // Spawn targets at intervals
+  function spawnTargets() {
+    if (activeTargets.length < 5) {
+      createTarget();
+    }
+  }
+
+  // Timer countdown
+  function countdown() {
+    timeLeft--;
+    timerDisplay.textContent = `Time: ${timeLeft}`;
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }
+
+  // Determine proficiency based on score
+  function proficiencyLevel(score) {
+    if(score >= 25) return "Elite Cerealian Shooter";
+    if(score >= 15) return "Skilled Cerealian Shooter";
+    if(score >= 7) return "Novice Cerealian Shooter";
+    return "Needs More Training";
+  }
+
+  // End game sequence
+  function endGame() {
+    clearInterval(gameInterval);
+    clearInterval(targetInterval);
+    wordDisappearTimeouts.forEach(t => clearTimeout(t));
+    activeTargets.forEach(t => clearInterval(t.dataset.teleportInterval));
+    activeTargets.forEach(t => gameContainer.removeChild(t));
+    activeTargets = [];
+    message.style.display = 'block';
+    message.innerHTML = `<strong>Time's Up!</strong><br>Your score: ${score}<br>Proficiency: ${proficiencyLevel(score)}<br><br><button id="restartBtn">Try Again</button>`;
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      resetGame();
+    });
+  }
+
+  // Reset everything and start again
+  function resetGame() {
+    score = 0;
+    timeLeft = 60;
+    scoreboard.textContent = 'Score: 0';
+    timerDisplay.textContent = 'Time: 60';
+    message.style.display = 'none';
+    startGame();
+  }
+
+  // Start game loop
+  function startGame() {
+    gameInterval = setInterval(countdown, 1000);
+    targetInterval = setInterval(spawnTargets, 800);
+  }
+
+  // Initial start
+  startGame();
+})();
+</script>
+</body>
+</html>

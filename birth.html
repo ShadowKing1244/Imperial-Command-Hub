@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Birth</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background resembling space */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Birth of Your Warrior</h1>
+    <p>You were born in:</p>
+    <p id="birthPrompt"></p>
+
+    <button class="button" onclick="continueToRace()">Continue</button>
+
+    <script>
+        // Function to display a random birth prompt for Universe 7
+        function displayRandomBirthPrompt() {
+            const birthPrompts = [
+                "You were born on Planet Earth.",
+                "Your family moved to Planet Namek when you were young.",
+                "You escaped Frieza's tyranny on Planet Vegeta.",
+                "You were raised in the mountains of Earth, away from civilization.",
+                "You were born in a secret underground city on Planet Earth.",
+                "Your parents were explorers, and you were born on an unknown planet they discovered.",
+                "You were born in a remote village on Planet Earth, known for its warrior traditions.",
+                "You were born in a hidden village deep in the forests of Planet Earth."
+                // Add more prompts as needed
+            ];
+            const randomIndex = Math.floor(Math.random() * birthPrompts.length);
+            document.getElementById("birthPrompt").textContent = birthPrompts[randomIndex];
+        }
+
+        // Display a random birth prompt when the page loads
+        displayRandomBirthPrompt();
+
+        // Function to navigate to the race selection page
+        function continueToRace() {
+            window.location.href = "race.html";
+        }
+    </script>
+</body>
+</html>

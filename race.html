@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Race Selection</title>
+    <style>
+        body {
+            background-color: #6b8e23; /* Piccolo's green */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #9b30ff; /* Piccolo's purple */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #b17acc; /* Lighter purple on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Race</h1>
+    <p>Your race has been randomly selected:</p>
+    <p id="selectedRace"></p>
+    
+    <button class="button" onclick="continueToAbilities()">Continue</button>
+
+    <script>
+        // Define race options for Universe 7 excluding Super Saiyan God and Eternal Dragon
+        const races = [
+            "Android",
+            "Angel",
+            "Cerealian",
+            "Core Person",
+            "Demon",
+            "Demon Realm Race",
+            "Earthling",
+            "Frieza Race",
+            "Majin",
+            "Namekian",
+            "Saiyan",
+            "Tuffle"
+        ];
+
+        // Function to randomly select a race
+        function selectRace() {
+            const randomIndex = Math.floor(Math.random() * races.length);
+            return races[randomIndex];
+        }
+
+        // Display the selected race on the page
+        document.getElementById("selectedRace").textContent = selectRace();
+
+        // Function to navigate to the abilities selection page
+        function continueToAbilities() {
+            window.location.href = "abilities.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Abilities</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background resembling space */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .box {
+            width: 300px;
+            background-color: #3a3a3a; /* Dark gray box for skills */
+            color: white;
+            text-align: left;
+            padding: 20px;
+            border-radius: 5px;
+            float: left; /* Align box to the left side */
+            margin-right: 50px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+
+        .race-button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff; /* Blue button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .race-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Abilities</h1>
+    
+    <!-- Display user's class -->
+    <p>Your class:</p>
+    <p id="userClass"></p>
+
+    <!-- Box to display main skills and forms -->
+    <div class="box" id="skillsBox">
+        <h2>Main Skills:</h2>
+        <ul id="mainSkillsList"></ul>
+        <h2>Forms:</h2>
+        <p id="forms"></p>
+    </div>
+
+    <!-- Race selection buttons -->
+    <div id="raceSelection">
+        <button class="race-button" onclick="setRace('Android')">Android</button>
+        <button class="race-button" onclick="setRace('Angel')">Angel</button>
+        <button class="race-button" onclick="setRace('Cerealian')">Cerealian</button>
+        <button class="race-button" onclick="setRace('Core Person')">Core Person</button>
+        <button class="race-button" onclick="setRace('Demon')">Demon</button>
+        <button class="race-button" onclick="setRace('Demon Realm Race')">Demon Realm Race</button>
+        <button class="race-button" onclick="setRace('Dragon')">Dragon</button>
+        <button class="race-button" onclick="setRace('Earthling')">Earthling</button>
+        <button class="race-button" onclick="setRace('Frieza Race')">Frieza Race</button>
+        <button class="race-button" onclick="setRace('Majin')">Majin</button>
+        <button class="race-button" onclick="setRace('Namekian')">Namekian</button>
+        <button class="race-button" onclick="setRace('Saiyan')">Saiyan</button>
+        <button class="race-button" onclick="setRace('Tuffle')">Tuffle</button>
+    </div>
+
+    <!-- Continue button to Scaling page -->
+    <a href="scale.html" class="button">Continue</a>
+
+    <script>
+        const dbzSkills = ["Kamehameha", "Spirit Bomb", "Final Flash", "Galick Gun", "Instant Transmission",
+            "Solar Flare", "Destructo Disc", "Makankosappo (Special Beam Cannon)", "Big Bang Attack",
+            "Masenko", "Death Beam", "Burning Attack", "Death Ball", "Kaioken", "Energy Shield",
+            "Telekinesis", "Regeneration", "Mind Reading", "Flight", "Teleportation", "Ki Sense",
+            "Fusion Dance", "Potara Fusion", "Time Skip", "Afterimage Technique", "Super Explosive Wave",
+            "Dragon Fist", "Energy Absorption", "Solar Kamehameha", "Bansho Fan", "Shunkan Ido (Instantaneous Movement)",
+            "Continuous Energy Bullets", "Explosive Wave", "Tri-Beam", "Mystic Attack", "Psycho Thread", "Dragon Claw",
+            "Galactic Donut", "Masendan", "Photon Wave", "Dodon Ray", "Darkness Sword Attack", "Illusion Smash",
+            "Eraser Cannon", "Kiai", "Evil Containment Wave", "Super Ghost Kamikaze Attack", "Wolf Fang Fist",
+            "Light Grenade", "Energy Wave", "Saiyan Spirit"];
+
+        function setRace(race) {
+            document.getElementById("userClass").textContent = race;
+            document.getElementById("forms").textContent = getRandomForm(race);
+            displayAbilities();
+        }
+
+        function displayAbilities() {
+            const mainSkillsList = document.getElementById("mainSkillsList");
+            mainSkillsList.innerHTML = "";
+            dbzSkills.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 5; i++) {
+                const skillItem = document.createElement("li");
+                skillItem.textContent = dbzSkills[i];
+                mainSkillsList.appendChild(skillItem);
+            }
+        }
+
+        function getRandomForm(race) {
+            switch (race) {
+                case "Android":
+                    return "Cyborg Form";
+                case "Angel":
+                    return "No special form (always in Ultra Instinct)";
+                case "Cerealian":
+                    return "Psychic Form";
+                case "Core Person":
+                    return "Core Form";
+                case "Demon":
+                    return "Demon Form";
+                case "Demon Realm Race":
+                    return "Makaioshin Form";
+                case "Dragon":
+                    return "Dragon Form";
+                case "Earthling":
+                    return "Base form";
+                case "Frieza Race":
+                    return "Final Form";
+                case "Majin":
+                    return "Pure Majin Form";
+                case "Namekian":
+                    return "Base form";
+                case "Saiyan":
+                    return "Random Saiyan Form";
+                case "Tuffle":
+                    return "Tuffle Form";
+                default:
+                    return "Base form";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Wish</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+
+        .continue-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff; /* Blue button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 50px;
+        }
+
+        .continue-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .text-box {
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid white;
+            border-radius: 5px;
+            width: 300px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            background-color: transparent;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wish</h1>
+    
+    <!-- Buttons to summon Shenron and Porunga -->
+    <button class="button" onclick="summonShenron()">Eternal Dragon. By Your name I summon you forth, Shenron!</button>
+    <button class="button" onclick="summonPorunga()">Takkara-Puto Popporunga Pupiritto-Paro</button>
+
+    <!-- Text box for the wish -->
+    <div id="wishBox" style="display: none;">
+        <p>What do you desire, warrior?</p>
+        <input type="text" class="text-box" id="wishInput" placeholder="Enter your wish...">
+        <button class="continue-button" onclick="continueToShenron()">Continue</button>
+    </div>
+
+    <!-- Script to handle wish summoning and continuation -->
+    <script>
+        function summonShenron() {
+            document.getElementById("wishBox").style.display = "block";
+            document.getElementById("wishInput").focus();
+            document.body.style.backgroundColor = "black";
+            document.querySelectorAll('.button').forEach(button => button.style.display = 'none');
+        }
+
+        function summonPorunga() {
+            document.getElementById("wishBox").style.display = "block";
+            document.getElementById("wishInput").focus();
+            document.body.style.backgroundColor = "black";
+            document.querySelectorAll('.button').forEach(button => button.style.display = 'none');
+        }
+
+        function continueToShenron() {
+            const wish = document.getElementById("wishInput").value;
+            // You can add code here to handle the wish (not implemented in this example)
+            window.location.href = "shenron.html"; // Redirect to Shenron page
+        }
+
+        function continueToPorunga() {
+            const wish = document.getElementById("wishInput").value;
+            // You can add code here to handle the wish (not implemented in this example)
+            window.location.href = "porunga.html"; // Redirect to Porunga page
+        }
+    </script>
+</body>
+</html>

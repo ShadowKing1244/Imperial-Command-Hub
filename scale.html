@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ OC Generator - Scale</title>
+    <style>
+        body {
+            background-color: #1d1f22; /* Dark background resembling space */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff9500; /* Orange button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .button:hover {
+            background-color: #ffad33; /* Lighter orange on hover */
+        }
+
+        .scale-info {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Power Scale</h1>
+
+    <div id="scaleInfo" class="scale-info"></div>
+    
+    <!-- Button to generate power scale -->
+    <button class="button" onclick="generateScale()">Scale Me</button>
+
+    <script>
+        // Power scale data for different sagas and characters
+        const sagas = [
+            { saga: "Trunks Saga", characters: [
+                { name: "Gohan (Not very angry)", scale: 120000 },
+                { name: "Yamcha", scale: 41000 },
+                { name: "Tien", scale: 85000 },
+                { name: "Chiaotzu", scale: 20000 },
+                { name: "Krillin", scale: 75000 },
+                { name: "Vegeta", scale: 2 },
+                { name: "Piccolo", scale: 1.1 },
+                { name: "Mecha Frieza", scale: 125 },
+                { name: "King Cold", scale: 110 },
+                { name: "Trunks", scale: 3.5 },
+                { name: "Super Saiyan Trunks", scale: 175 },
+                { name: "Goku", scale: 3.8 },
+                { name: "Super Saiyan Goku", scale: 190 }
+            ]},
+            { saga: "Android Saga", characters: [
+                { name: "Yamcha", scale: 92000 },
+                { name: "Android 19", scale: 100 },
+                { name: "Android 20", scale: 110 },
+                { name: "Tien", scale: 145000 },
+                { name: "Gohan", scale: 2 },
+                { name: "Krillin", scale: 126000 },
+                { name: "Piccolo (Weights)", scale: 145 },
+                { name: "Super Saiyan Goku (Heart Virus from the start)", scale: 130 },
+                { name: "Android 19 (Energy absorbed from Kamehameha)", scale: 140 },
+                { name: "Super Saiyan Goku (Very injured from the Heart Virus)", scale: 1 },
+                { name: "Vegeta", scale: 5.6 },
+                { name: "Super Saiyan Vegeta", scale: 280 },
+                { name: "Android 20 (Some of Piccolo's energy)", scale: 150 },
+                { name: "Piccolo (No weights)", scale: 160 },
+                { name: "Android 18", scale: 410 },
+                { name: "Android 17", scale: 400 },
+                { name: "Android 16", scale: 500 },
+                { name: "Super Saiyan Trunks", scale: 175 },
+                { name: "Super Namekian Piccolo", scale: 400 }
+            ]},
+            { saga: "Imperfect Cell Saga", characters: [
+                { name: "Imperfect Cell", scale: 350 },
+                { name: "Super Namekian Piccolo", scale: 400 },
+                // Add more characters here...
+            ]},
+            // Add more sagas here...
+        ];
+
+        function generateScale() {
+            // Choose a random saga
+            const randomSaga = sagas[Math.floor(Math.random() * sagas.length)];
+            const randomCharacter = randomSaga.characters[Math.floor(Math.random() * randomSaga.characters.length)];
+
+            // Display the randomly chosen saga and character
+            const scaleInfo = document.getElementById("scaleInfo");
+            scaleInfo.textContent = `Random Saga: ${randomSaga.saga}, Character: ${randomCharacter.name}`;
+
+            // Wait for a moment before generating the scale
+            setTimeout(() => {
+                // Generate scale for the randomly chosen character
+                alert(`Scale for ${randomCharacter.name}: ${randomCharacter.scale}`);
+            }, 1000);
+        }
+</script>
+        <!-- Button to continue to the next page -->
+        <a href="personality.html" class="button">Continue</a>
+    </body>
+</html>
