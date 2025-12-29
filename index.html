@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FRIEZA FORCE // SYSTEM-OS v13.0</title>
+    <title>FRIEZA FORCE // SYSTEM-OS v14.0</title>
     <style>
         :root {
             --frieza-purple: #8a2be2;
@@ -117,7 +117,7 @@
 <body>
 
     <nav>
-        <div style="font-size: 1.1rem; font-weight: bold; color: var(--frieza-gold); margin-bottom: 20px;">IMPERIAL OS v13.0</div>
+        <div style="font-size: 1.1rem; font-weight: bold; color: var(--frieza-gold); margin-bottom: 20px;">IMPERIAL OS v14.0</div>
 
         <div class="user-profile">
             <div class="stat-line">UNIT: <span class="stat-val">ELITE-SOLDIER</span></div>
@@ -139,7 +139,8 @@
         <div class="nav-category">
             <div class="category-label">Intelligence & Logistics</div>
             <button class="nav-btn" onclick="loadPage('scouterdecoder2.html', 'Scouter Decoder', this)">scouterdecoder2.html</button>
-            <button class="nav-btn" onclick="loadPage('cerealianeyetest.html', 'Cerealian Eye Test', this)">cerealianeyetest.html</button>
+            <button class="nav-btn" onclick="loadPage('cerealianeyetest.html', 'Target Training v1', this)">cerealianeyetest.html</button>
+            <button class="nav-btn" onclick="loadPage('cerealianeyetest2.html', 'Tactical Variety v2', this)">cerealianeyetest2.html</button>
             <button class="nav-btn" onclick="loadPage('spacesideassistance.html', 'Spaceside Assist', this)">spacesideassistance.html</button>
         </div>
 
@@ -159,7 +160,6 @@
     </div>
 
     <script>
-        // Data Sync logic for LocalStorage
         function syncData() {
             const zeni = localStorage.getItem('frieza_zeni') || "5000";
             document.getElementById('master-zeni').innerText = parseInt(zeni).toLocaleString();

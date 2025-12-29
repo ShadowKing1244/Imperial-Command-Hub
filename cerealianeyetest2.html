@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cerealian Eye Training Protocol</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Iceland&display=swap');
+
+- {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+body {
+background: radial-gradient(ellipse at center, #1a0a0a 0%, #000000 100%);
+font-family: ‘Iceland’, ‘Courier New’, monospace;
+color: #00ff41;
+overflow: hidden;
+cursor: none;
+}
+
+/* Scanline effect for scouter feel */
+body::before {
+content: ‘’;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: repeating-linear-gradient(
+0deg,
+rgba(0, 255, 65, 0.03) 0px,
+rgba(0, 255, 65, 0.03) 1px,
+transparent 1px,
+transparent 2px
+);
+pointer-events: none;
+z-index: 9999;
+animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+0% { transform: translateY(0); }
+100% { transform: translateY(10px); }
+}
+
+/* Vignette effect */
+body::after {
+content: ‘’;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.9);
+pointer-events: none;
+z-index: 9998;
+}
+
+#gameContainer {
+position: relative;
+width: 100vw;
+height: 100vh;
+user-select: none;
+}
+
+/* Scouter HUD frame */
+.hud-frame {
+position: fixed;
+border: 2px solid #ff0040;
+background: rgba(0, 0, 0, 0.7);
+padding: 12px 20px;
+font-family: ‘Audiowide’, sans-serif;
+font-size: 1.1rem;
+letter-spacing: 2px;
+text-transform: uppercase;
+box-shadow:
+0 0 20px rgba(255, 0, 64, 0.5),
+inset 0 0 20px rgba(255, 0, 64, 0.1);
+z-index: 100;
+}
+
+#powerLevel {
+top: 20px;
+left: 20px;
+color: #ff0040;
+text-shadow: 0 0 10px #ff0040;
+}
+
+#timer {
+top: 20px;
+right: 20px;
+color: #00ff41;
+text-shadow: 0 0 10px #00ff41;
+}
+
+#comboDisplay {
+top: 80px;
+left: 20px;
+color: #ffff00;
+text-shadow: 0 0 15px #ffff00;
+font-size: 1.3rem;
+animation: comboGlow 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes comboGlow {
+from { text-shadow: 0 0 15px #ffff00; }
+to { text-shadow: 0 0 25px #ffff00, 0 0 35px #ffff00; }
+}
+
+#statusBar {
+bottom: 20px;
+left: 20px;
+right: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+color: #00ffff;
+text-shadow: 0 0 10px #00ffff;
+}
+
+/* Target styling - enemy names */
+.target {
+position: absolute;
+font-family: ‘Audiowide’, sans-serif;
+font-weight: bold;
+font-size: 1.4rem;
+color: #ff0040;
+text-shadow:
+0 0 10px #ff0040,
+0 0 20px #ff0040,
+0 0 30px rgba(255, 0, 64, 0.5);
+cursor: crosshair;
+user-select: none;
+padding: 8px 16px;
+background: rgba(255, 0, 64, 0.1);
+border: 2px solid #ff0040;
+border-radius: 4px;
+animation: targetPulse 1s infinite;
+transition: all 0.1s;
+white-space: nowrap;
+}
+
+.target::before {
+content: ‘◄’;
+position: absolute;
+left: -25px;
+animation: targetArrow 1s infinite;
+}
+
+.target::after {
+content: ‘►’;
+position: absolute;
+right: -25px;
+animation: targetArrow 1s infinite;
+}
+
+@keyframes targetPulse {
+0%, 100% { transform: scale(1); opacity: 1; }
+50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes targetArrow {
+0%, 100% { opacity: 0.3; }
+50% { opacity: 1; }
+}
+
+.target:hover {
+transform: scale(1.1);
+text-shadow:
+0 0 15px #ff0040,
+0 0 30px #ff0040,
+0 0 45px #ff0040;
+}
+
+/* Power-ups */
+.powerup {
+position: absolute;
+font-size: 2.5rem;
+cursor: pointer;
+animation: powerupFloat 2s ease-in-out infinite;
+filter: drop-shadow(0 0 20px currentColor);
+z-index: 50;
+}
+
+.powerup.slowmo {
+color: #00ffff;
+}
+
+.powerup.bonus {
+color: #ffff00;
+}
+
+@keyframes powerupFloat {
+0%, 100% { transform: translateY(0) rotate(0deg); }
+50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Hit effects */
+.hit-effect {
+position: fixed;
+font-family: ‘Audiowide’, sans-serif;
+font-size: 2rem;
+font-weight: bold;
+color: #ffff00;
+text-shadow: 0 0 20px #ffff00;
+pointer-events: none;
+z-index: 200;
+animation: hitPop 0.5s ease-out forwards;
+}
+
+@keyframes hitPop {
+0% { transform: scale(0.5); opacity: 1; }
+100% { transform: scale(2) translateY(-50px); opacity: 0; }
+}
+
+.explosion {
+position: fixed;
+pointer-events: none;
+z-index: 150;
+}
+
+.explosion-ring {
+position: absolute;
+border: 3px solid #ff0040;
+border-radius: 50%;
+animation: explode 0.5s ease-out forwards;
+}
+
+@keyframes explode {
+0% {
+width: 0;
+height: 0;
+opacity: 1;
+}
+100% {
+width: 100px;
+height: 100px;
+opacity: 0;
+}
+}
+
+/* Custom crosshair */
+#crosshair {
+position: fixed;
+width: 50px;
+height: 50px;
+pointer-events: none;
+z-index: 10000;
+transition: transform 0.05s;
+}
+
+.crosshair-line {
+position: absolute;
+background: #00ff41;
+box-shadow: 0 0 10px #00ff41;
+}
+
+.crosshair-h {
+top: 24px;
+left: 0;
+width: 50px;
+height: 2px;
+}
+
+.crosshair-v {
+left: 24px;
+top: 0;
+width: 2px;
+height: 50px;
+}
+
+.crosshair-center {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 8px;
+height: 8px;
+border: 2px solid #00ff41;
+border-radius: 50%;
+animation: crosshairPulse 1s infinite;
+}
+
+@keyframes crosshairPulse {
+0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.6; }
+}
+
+/* Modal screens */
+.modal {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: rgba(0, 0, 0, 0.95);
+border: 3px solid #ff0040;
+border-radius: 8px;
+padding: 40px;
+z-index: 1000;
+text-align: center;
+box-shadow:
+0 0 50px rgba(255, 0, 64, 0.8),
+inset 0 0 50px rgba(255, 0, 64, 0.1);
+min-width: 500px;
+}
+
+.modal h1 {
+font-family: ‘Audiowide’, sans-serif;
+font-size: 2.5rem;
+color: #ff0040;
+text-shadow: 0 0 20px #ff0040;
+margin-bottom: 20px;
+letter-spacing: 3px;
+text-transform: uppercase;
+}
+
+.modal h2 {
+font-family: ‘Audiowide’, sans-serif;
+font-size: 2rem;
+color: #00ff41;
+text-shadow: 0 0 15px #00ff41;
+margin-bottom: 20px;
+}
+
+.stat-line {
+font-family: ‘Iceland’, monospace;
+font-size: 1.2rem;
+color: #00ffff;
+text-shadow: 0 0 10px #00ffff;
+margin: 10px 0;
+letter-spacing: 2px;
+}
+
+.stat-line .label {
+color: #888;
+}
+
+.stat-line .value {
+color: #00ff41;
+font-weight: bold;
+}
+
+.proficiency {
+font-family: ‘Audiowide’, sans-serif;
+font-size: 1.8rem;
+margin: 20px 0;
+letter-spacing: 2px;
+text-transform: uppercase;
+}
+
+.btn {
+font-family: ‘Audiowide’, sans-serif;
+background: linear-gradient(45deg, #ff0040, #cc0033);
+color: #fff;
+border: 2px solid #ff0040;
+padding: 15px 40px;
+font-size: 1.2rem;
+letter-spacing: 2px;
+text-transform: uppercase;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.3s;
+box-shadow: 0 0 20px rgba(255, 0, 64, 0.5);
+}
+
+.btn:hover {
+background: linear-gradient(45deg, #ff3366, #ff0040);
+box-shadow: 0 0 30px rgba(255, 0, 64, 0.8);
+transform: scale(1.05);
+}
+
+/* Slow-mo overlay */
+.slowmo-overlay {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-family: ‘Audiowide’, sans-serif;
+font-size: 3rem;
+color: #00ffff;
+text-shadow:
+0 0 20px #00ffff,
+0 0 40px #00ffff,
+0 0 60px #00ffff;
+pointer-events: none;
+z-index: 300;
+animation: slowmoFlash 0.5s infinite;
+}
+
+@keyframes slowmoFlash {
+0%, 100% { opacity: 0.8; }
+50% { opacity: 1; }
+}
+
+.high-score {
+font-family: ‘Audiowide’, sans-serif;
+color: #ffff00;
+text-shadow: 0 0 15px #ffff00;
+font-size: 1.1rem;
+}
+</style>
+
+</head>
+<body>
+<div id="gameContainer"></div>
+
+<!-- Crosshair -->
+
+<div id="crosshair">
+  <div class="crosshair-line crosshair-h"></div>
+  <div class="crosshair-line crosshair-v"></div>
+  <div class="crosshair-center"></div>
+</div>
+
+<!-- HUD Elements -->
+
+<div id="powerLevel" class="hud-frame" style="display:none;">
+  <div>POWER: <span id="scoreDisplay">0</span></div>
+</div>
+
+<div id="timer" class="hud-frame" style="display:none;">
+  <div>TIME: <span id="timeDisplay">60</span>s</div>
+</div>
+
+<div id="comboDisplay" class="hud-frame" style="display:none;">
+  <div>COMBO X<span id="comboValue">0</span></div>
+</div>
+
+<div id="statusBar" class="hud-frame" style="display:none;">
+  <div>TARGETS: <span id="targetsHit">0</span></div>
+  <div>ACCURACY: <span id="accuracy">100</span>%</div>
+  <div id="highScoreDisplay" class="high-score"></div>
+</div>
+
+<!-- Start Modal -->
+
+<div id="startModal" class="modal">
+  <h1>◄ CEREALIAN EYE PROTOCOL ►</h1>
+  <div class="stat-line" style="color: #00ff41; margin: 20px 0;">
+    >>> FRIEZA FORCE TARGET ELIMINATION <<<
+  </div>
+  <div class="stat-line" style="font-size: 1rem; margin-bottom: 30px;">
+    Eliminate all Frieza Force operatives<br>
+    Build combos for power multipliers<br>
+    Collect power-ups for advantages
+  </div>
+  <div id="startHighScore" class="high-score" style="margin-bottom: 20px;"></div>
+  <button class="btn" onclick="startGame()">▶ INITIATE TRAINING</button>
+</div>
+
+<!-- Game Over Modal -->
+
+<div id="endModal" class="modal" style="display:none;">
+  <h2>◄ TRAINING COMPLETE ►</h2>
+  <div id="finalScore" class="stat-line" style="font-size: 2rem; color: #ff0040; margin: 20px 0;"></div>
+  <div id="proficiencyLevel" class="proficiency"></div>
+  <div style="margin: 30px 0; border-top: 2px solid #333; border-bottom: 2px solid #333; padding: 20px 0;">
+    <div class="stat-line">
+      <span class="label">TARGETS ELIMINATED:</span> 
+      <span class="value" id="finalHits">0</span>
+    </div>
+    <div class="stat-line">
+      <span class="label">ACCURACY RATING:</span> 
+      <span class="value" id="finalAccuracy">0</span>%
+    </div>
+    <div class="stat-line">
+      <span class="label">MAX COMBO CHAIN:</span> 
+      <span class="value" id="finalMaxCombo">0</span>
+    </div>
+  </div>
+  <div id="newHighScore" style="display:none; color: #ffff00; font-size: 1.5rem; margin: 20px 0; text-shadow: 0 0 20px #ffff00;">
+    ◄◄◄ NEW HIGH SCORE ►►►
+  </div>
+  <button class="btn" onclick="startGame()">◄ RETRY PROTOCOL ►</button>
+</div>
+
+<script>
+(() => {
+  const gameContainer = document.getElementById('gameContainer');
+  const crosshair = document.getElementById('crosshair');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const comboDisplay = document.getElementById('comboDisplay');
+  const comboValue = document.getElementById('comboValue');
+  const targetsHit = document.getElementById('targetsHit');
+  const accuracy = document.getElementById('accuracy');
+  
+  const words = [
+    "FRIEZA", "GINYU", "DODORIA", "ZARBON", 
+    "JEICE", "BURTER", "RECOOME", "GULDO", 
+    "KING COLD", "SORBET", "TAGOMA", "SHISAMI"
+  ];
+
+  let gameActive = false;
+  let score = 0;
+  let timeLeft = 60;
+  let combo = 0;
+  let maxCombo = 0;
+  let hits = 0;
+  let misses = 0;
+  let targets = [];
+  let powerUp = null;
+  let slowMo = false;
+  let timers = [];
+  let highScore = parseInt(localStorage.getItem('cerealianHighScore') || '0');
+
+  // Update high score display
+  const updateHighScoreDisplay = () => {
+    const startHS = document.getElementById('startHighScore');
+    const statusHS = document.getElementById('highScoreDisplay');
+    if (highScore > 0) {
+      const text = `◄ RECORD: ${highScore} ►`;
+      if (startHS) startHS.textContent = text;
+      if (statusHS) statusHS.textContent = text;
+    }
+  };
+  updateHighScoreDisplay();
+
+  // Mouse tracking
+  window.addEventListener('mousemove', (e) => {
+    crosshair.style.left = (e.clientX - 25) + 'px';
+    crosshair.style.top = (e.clientY - 25) + 'px';
+  });
+
+  // Click miss handler
+  gameContainer.addEventListener('click', (e) => {
+    if (!gameActive || e.target !== gameContainer) return;
+    misses++;
+    combo = 0;
+    comboDisplay.style.display = 'none';
+    updateAccuracy();
+  });
+
+  window.startGame = () => {
+    // Reset
+    score = 0;
+    timeLeft = 60;
+    combo = 0;
+    maxCombo = 0;
+    hits = 0;
+    misses = 0;
+    targets = [];
+    powerUp = null;
+    slowMo = false;
+    timers.forEach(t => clearInterval(t));
+    timers = [];
+    
+    gameContainer.innerHTML = '';
+    document.getElementById('startModal').style.display = 'none';
+    document.getElementById('endModal').style.display = 'none';
+    document.getElementById('powerLevel').style.display = 'block';
+    document.getElementById('timer').style.display = 'block';
+    document.getElementById('statusBar').style.display = 'flex';
+    
+    scoreDisplay.textContent = '0';
+    timeDisplay.textContent = '60';
+    targetsHit.textContent = '0';
+    accuracy.textContent = '100';
+    
+    gameActive = true;
+    
+    // Start timers
+    timers.push(setInterval(gameLoop, 1000));
+    timers.push(setInterval(spawnTarget, 600));
+    timers.push(setInterval(spawnPowerUp, 10000));
+  };
+
+  const gameLoop = () => {
+    if (!gameActive) return;
+    
+    timeLeft--;
+    timeDisplay.textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  };
+
+  const spawnTarget = () => {
+    if (!gameActive) return;
+    
+    const difficulty = Math.floor((60 - timeLeft) / 15);
+    const maxTargets = slowMo ? 3 : Math.min(8, 4 + difficulty);
+    
+    if (targets.length >= maxTargets) return;
+    
+    const target = document.createElement('div');
+    target.className = 'target';
+    target.textContent = words[Math.floor(Math.random() * words.length)];
+    
+    const margin = 100;
+    const x = Math.random() * (window.innerWidth - margin * 2) + margin;
+    const y = Math.random() * (window.innerHeight - margin * 2) + margin;
+    target.style.left = x + 'px';
+    target.style.top = y + 'px';
+    
+    gameContainer.appendChild(target);
+    targets.push(target);
+    
+    target.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hitTarget(target, e.clientX, e.clientY);
+    });
+    
+    // Auto-remove after time
+    const lifetime = slowMo ? 4000 : Math.max(1500, 3000 - difficulty * 400);
+    const timeout = setTimeout(() => {
+      if (target.parentNode) {
+        target.remove();
+        targets = targets.filter(t => t !== target);
+      }
+    }, lifetime);
+  };
+
+  const hitTarget = (target, x, y) => {
+    if (!gameActive) return;
+    
+    // Remove target
+    target.remove();
+    targets = targets.filter(t => t !== target);
+    
+    // Update combo
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
+    
+    // Calculate points
+    const multiplier = Math.floor(combo / 3) + 1;
+    const points = multiplier;
+    score += points;
+    hits++;
+    
+    // Update displays
+    scoreDisplay.textContent = score;
+    targetsHit.textContent = hits;
+    updateAccuracy();
+    
+    if (combo > 0) {
+      comboDisplay.style.display = 'block';
+      comboValue.textContent = combo;
+    }
+    
+    // Visual feedback
+    createHitEffect(x, y, points);
+    createExplosion(x, y);
+  };
+
+  const createHitEffect = (x, y, points) => {
+    const effect = document.createElement('div');
+    effect.className = 'hit-effect';
+    effect.textContent = `+${points}`;
+    effect.style.left = x + 'px';
+    effect.style.top = y + 'px';
+    document.body.appendChild(effect);
+    setTimeout(() => effect.remove(), 500);
+  };
+
+  const createExplosion = (x, y) => {
+    const explosion = document.createElement('div');
+    explosion.className = 'explosion';
+    explosion.style.left = (x - 50) + 'px';
+    explosion.style.top = (y - 50) + 'px';
+    
+    for (let i = 0; i < 3; i++) {
+      const ring = document.createElement('div');
+      ring.className = 'explosion-ring';
+      ring.style.animationDelay = (i * 0.1) + 's';
+      explosion.appendChild(ring);
+    }
+    
+    document.body.appendChild(explosion);
+    setTimeout(() => explosion.remove(), 600);
+  };
+
+  const spawnPowerUp = () => {
+    if (!gameActive || powerUp) return;
+    
+    if (Math.random() > 0.6) {
+      const type = Math.random() > 0.5 ? 'slowmo' : 'bonus';
+      powerUp = document.createElement('div');
+      powerUp.className = `powerup ${type}`;
+      powerUp.innerHTML = type === 'slowmo' ? '⚡' : '★';
+      
+      const margin = 100;
+      const x = Math.random() * (window.innerWidth - margin * 2) + margin;
+      const y = Math.random() * (window.innerHeight - margin * 2) + margin;
+      powerUp.style.left = x + 'px';
+      powerUp.style.top = y + 'px';
+      
+      gameContainer.appendChild(powerUp);
+      
+      powerUp.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (type === 'slowmo') {
+          activateSlowMo();
+        } else {
+          score += 5;
+          scoreDisplay.textContent = score;
+        }
+        powerUp.remove();
+        powerUp = null;
+      });
+      
+      setTimeout(() => {
+        if (powerUp && powerUp.parentNode) {
+          powerUp.remove();
+          powerUp = null;
+        }
+      }, 4000);
+    }
+  };
+
+  const activateSlowMo = () => {
+    slowMo = true;
+    const overlay = document.createElement('div');
+    overlay.className = 'slowmo-overlay';
+    overlay.textContent = '◄◄ SLOW MOTION ►►';
+    document.body.appendChild(overlay);
+    
+    setTimeout(() => {
+      slowMo = false;
+      overlay.remove();
+    }, 5000);
+  };
+
+  const updateAccuracy = () => {
+    const total = hits + misses;
+    const acc = total > 0 ? Math.round((hits / total) * 100) : 100;
+    accuracy.textContent = acc;
+  };
+
+  const endGame = () => {
+    gameActive = false;
+    timers.forEach(t => clearInterval(t));
+    timers = [];
+    
+    // Hide HUD
+    document.getElementById('powerLevel').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    document.getElementById('comboDisplay').style.display = 'none';
+    document.getElementById('statusBar').style.display = 'none';
+    
+    // Clear all targets
+    targets.forEach(t => t.remove());
+    targets = [];
+    if (powerUp) powerUp.remove();
+    
+    // Calculate stats
+    const total = hits + misses;
+    const acc = total > 0 ? Math.round((hits / total) * 100) : 100;
+    
+    // Determine proficiency
+    let prof = { text: 'NEEDS TRAINING', color: '#ff0040' };
+    if (score >= 60) prof = { text: '◄◄ LEGENDARY CEREALIAN ►►', color: '#ffff00' };
+    else if (score >= 40) prof = { text: '◄ ELITE MARKSMAN ►', color: '#00ff41' };
+    else if (score >= 25) prof = { text: 'SKILLED OPERATIVE', color: '#00ffff' };
+    else if (score >= 15) prof = { text: 'PROMISING TRAINEE', color: '#ffffff' };
+    
+    // Update modal
+    document.getElementById('finalScore').textContent = `POWER LEVEL: ${score}`;
+    document.getElementById('proficiencyLevel').textContent = prof.text;
+    document.getElementById('proficiencyLevel').style.color = prof.color;
+    document.getElementById('proficiencyLevel').style.textShadow = `0 0 20px ${prof.color}`;
+    document.getElementById('finalHits').textContent = hits;
+    document.getElementById('finalAccuracy').textContent = acc;
+    document.getElementById('finalMaxCombo').textContent = maxCombo;
+    
+    // Check high score
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('cerealianHighScore', highScore);
+      document.getElementById('newHighScore').style.display = 'block';
+      updateHighScoreDisplay();
+    } else {
+      document.getElementById('newHighScore').style.display = 'none';
+    }
+    
+    document.getElementById('endModal').style.display = 'block';
+  };
+})();
+</script>
+
+</body>
+</html>
