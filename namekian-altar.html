@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NAMEKIAN ANCESTRAL ALTAR // UPLINK</title>
+    <style>
+        :root {
+            --namek-green: #2ecc71;
+            --namek-pink: #ff9ff3;
+            --scouter-teal: #00f2ff;
+            --frieza-purple: #8a2be2;
+            --bg-dark: #050008;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--namek-green);
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            margin: 0;
+            border: 2px solid var(--namek-green);
+            height: 95vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px double var(--namek-green);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .gacha-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(46, 204, 113, 0.05);
+            padding: 20px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            box-sizing: border-box;
+        }
+
+        label { font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: #000;
+            color: var(--namek-green);
+            border: 1px solid var(--namek-green);
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: var(--namek-green);
+            color: #000;
+        }
+
+        #result-screen {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--namek-green);
+            background: rgba(0,0,0,0.9);
+        }
+
+        .rarity-label { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; text-align: center; }
+        .mission-box { color: #fff; font-size: 0.85rem; margin: 15px 0; line-height: 1.4; border-left: 3px solid var(--namek-pink); padding-left: 10px; }
+        .reward-box { color: var(--scouter-teal); font-weight: bold; font-size: 0.85rem; background: rgba(0, 242, 255, 0.1); padding: 8px; border: 1px solid var(--scouter-teal); }
+        .tech-list { font-size: 0.75rem; color: var(--namek-pink); margin-top: 5px; font-style: italic; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ANCESTRAL ALTAR</h1>
+        <p style="font-size: 0.7rem; color: var(--namek-pink);">[ BIOMETRIC SCAN: NAMEKIAN-TYPE DETECTED ]</p>
+    </div>
+
+    <div class="gacha-container">
+        <div id="selection-screen">
+            <label>Confirm Lineage Path:</label>
+            <select id="lineage-select">
+                <option value="Warrior">Warrior Clan (Combat Type)</option>
+                <option value="Dragon">Dragon Clan (Support Type)</option>
+            </select>
+            <button onclick="communeWithAncestors()">COMMUNE WITH ANCESTORS</button>
+            <div style="margin-top: 15px; font-size: 0.65rem; color: #666; text-align: center;">
+                NOTE: Requires approved Proof of Worth & 30-Min Trial.
+            </div>
+        </div>
+
+        <div id="result-screen">
+            <div id="rarity" class="rarity-label"></div>
+            <div id="mission-title" style="color: var(--namek-pink); font-weight: bold; font-size: 0.9rem;"></div>
+            <div id="mission-desc" class="mission-box"></div>
+            <div id="rewards" class="reward-box"></div>
+            <div id="tech-hint" class="tech-list"></div>
+            
+            <p style="font-size: 0.6rem; color: #888; margin-top: 15px; text-align: center;">SCREENSHOT RESULT AND POST TO #MISSION-LOG</p>
+            <button onclick="location.reload()" style="font-size: 0.6rem; margin-top: 10px; border-color: #444; color: #666;">DISCONNECT UPLINK</button>
+        </div>
+    </div>
+
+    <script>
+        function communeWithAncestors() {
+            // WEIGHTED LOGIC: 45% Epic (Hard), 30% Rare, 20% Common, 5% Legendary
+            const roll = Math.floor(Math.random() * 100) + 1;
+            const lineage = document.getElementById('lineage-select').value;
+            
+            let rarity, color, mission, title, reward, techs;
+
+            if (lineage === "Warrior") {
+                techs = "Target Techs: Mouth Blast, Gigantification, Regeneration";
+            } else {
+                techs = "Target Techs: Healing, Materialization, Potential Unlocking";
+            }
+
+            if (roll <= 20) {
+                rarity = "FADED MEMORY (COMMON)";
+                color = "#8b949e";
+                title = "Echoes of the Soil";
+                mission = "The Ancestors are quiet. You must spend the week in repetitive manual labor—carrying massive water urns to distant villages. (Min 300 Words)";
+                reward = "+50 PL | 15% Technique Mastery";
+            } else if (roll <= 50) {
+                rarity = "CLEAR VISION (RARE)";
+                color = "#1f6feb";
+                title = lineage + " Instinct";
+                mission = "A clear memory of a past master surface. You must replicate their movements perfectly in a solo sparring session. (Min 450 Words)";
+                reward = "+120 PL | 30% Technique Mastery";
+            } else if (roll <= 95) { 
+                // MOST COMMON RESULT (EPIC/HARD)
+                rarity = "ANCESTRAL WRATH (EPIC)";
+                color = "#8957e5";
+                title = "The Guru's Mental Lock";
+                mission = "Your consciousness is dragged into a mental storm. You must face a nightmare version of your greatest failure and overcome it through raw will. (Min 700 Words)";
+                reward = "+300 PL | 50% Technique Mastery";
+            } else {
+                rarity = "PURE AWAKENING (LEGENDARY)";
+                color = "#d29922";
+                title = "The Namekian Soul";
+                mission = "The Altar flares with blinding light. You don't just remember the technique; you become it. No training required—the knowledge is yours.";
+                reward = "+600 PL | INSTANT TECHNIQUE UNLOCK";
+            }
+
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('rarity').innerText = rarity;
+            document.getElementById('rarity').style.color = color;
+            document.getElementById('mission-title').innerText = "ASSIGNMENT: " + title;
+            document.getElementById('mission-desc').innerText = mission;
+            document.getElementById('rewards').innerText = "REWARD: " + reward;
+            document.getElementById('tech-hint').innerText = techs;
+        }
+    </script>
+</body>
+</html>
